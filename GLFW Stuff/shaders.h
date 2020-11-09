@@ -20,7 +20,7 @@ public:
 
 	int get_program() const
 	{
-		return shader_program;
+		return m_shader_program;
 	}
 
 	~ShaderProgram();
@@ -30,18 +30,18 @@ protected:
 	void _clean_();
 
 private:
-	unsigned vertex_shader = 0;
-	unsigned fragment_shader = 0;
-	unsigned shader_program = 0;
+	unsigned m_vertex_shader = 0;
+	unsigned m_fragment_shader = 0;
+	unsigned m_shader_program = 0;
 
-	std::string vertex_shader_src;
-	std::string fragment_shader_src;
+	std::string m_vertex_shader_src;
+	std::string m_fragment_shader_src;
 
-	const char* vertex_shader_src_ptr;
-	const char* fragment_shader_src_ptr;
+	const char* m_vertex_shader_src_ptr;
+	const char* m_fragment_shader_src_ptr;
 };
 
-ShaderProgram::ShaderProgram() : fragment_shader_src_ptr(nullptr), vertex_shader_src_ptr(nullptr)
+ShaderProgram::ShaderProgram() : m_fragment_shader_src_ptr(nullptr), m_vertex_shader_src_ptr(nullptr)
 {
 	//Create the shaders
 	init();
@@ -60,9 +60,9 @@ ShaderProgram::ShaderProgram(std::string vertex_fname, std::string fragment_fnam
 void ShaderProgram::init()
 {
 	//Create the shaders
-	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-	fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	shader_program = glCreateProgram();
+	m_vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+	m_fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+	m_shader_program = glCreateProgram();
 }
 
 void ShaderProgram::loadVertexShaderSource(std::istream& stream)
@@ -75,8 +75,8 @@ void ShaderProgram::loadVertexShaderSource(std::istream& stream)
 		src_stream << line << std::endl;
 	}
 
-	vertex_shader_src = src_stream.str();
-	vertex_shader_src_ptr = vertex_shader_src.c_str();
+	m_vertex_shader_src = src_stream.str();
+	m_vertex_shader_src_ptr = m_vertex_shader_src.c_str();
 }
 
 void ShaderProgram::loadFragmentShaderSource(std::istream& stream)
@@ -89,13 +89,13 @@ void ShaderProgram::loadFragmentShaderSource(std::istream& stream)
 		src_stream << line << std::endl;
 	}
 
-	fragment_shader_src = src_stream.str();
-	fragment_shader_src_ptr = fragment_shader_src.c_str();
+	m_fragment_shader_src = src_stream.str();
+	m_fragment_shader_src_ptr = m_fragment_shader_src.c_str();
 }
 
 void ShaderProgram::use()
 {
-	glUseProgram(shader_program);
+	glUseProgram(m_shader_program);
 }
 
 bool ShaderProgram::_compile_(int type)
@@ -110,19 +110,19 @@ bool ShaderProgram::_compile_(int type)
 	if (type == 0)
 	{
 		//Attach shaders and link program
-		glAttachShader(shader_program, vertex_shader);
-		glAttachShader(shader_program, fragment_shader);
-		glLinkProgram(shader_program);
+		glAttachShader(m_shader_program, m_vertex_shader);
+		glAttachShader(m_shader_program, m_fragment_shader);
+		glLinkProgram(m_shader_program);
 
 		//Get the link status and check for errors.
 		int status;
-		glGetProgramiv(shader_program, GL_LINK_STATUS, &status);
+		glGetProgramiv(m_shader_program, GL_LINK_STATUS, &status);
 		if (!status)
 		{
 			char log[512];
 
 			//Get the log and print it to console log.
-			glGetProgramInfoLog(shader_program, 512, NULL, log);
+			glGetProgramInfoLog(m_shader_program, 512, NULL, log);
 			std::cerr << log << std::endl;
 
 			return false;
@@ -133,18 +133,18 @@ bool ShaderProgram::_compile_(int type)
 	/*Vertex shader*/
 	else if (type < 0)
 	{
-		glShaderSource(vertex_shader, 1, &vertex_shader_src_ptr, NULL);
-		glCompileShader(vertex_shader);
+		glShaderSource(m_vertex_shader, 1, &m_vertex_shader_src_ptr, NULL);
+		glCompileShader(m_vertex_shader);
 
 		//Get compile status and check for errors.
 		int status;
-		glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &status);
+		glGetShaderiv(m_vertex_shader, GL_COMPILE_STATUS, &status);
 		if (!status)
 		{
 			char log[512];
 
 			//Get the compile log and print it to console log.
-			glGetShaderInfoLog(vertex_shader, 512, NULL, log);
+			glGetShaderInfoLog(m_vertex_shader, 512, NULL, log);
 			std::cerr << log << std::endl;
 
 			return false;
@@ -155,18 +155,18 @@ bool ShaderProgram::_compile_(int type)
 	/*Fragment shader*/
 	else if (type > 0)
 	{
-		glShaderSource(fragment_shader, 1, &fragment_shader_src_ptr, NULL);
-		glCompileShader(fragment_shader);
+		glShaderSource(m_fragment_shader, 1, &m_fragment_shader_src_ptr, NULL);
+		glCompileShader(m_fragment_shader);
 
 		//Get compile status and check for errors.
 		int status;
-		glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &status);
+		glGetShaderiv(m_vertex_shader, GL_COMPILE_STATUS, &status);
 		if (!status)
 		{
 			char log[512];
 
 			//Get the log and print it to console output.
-			glGetShaderInfoLog(vertex_shader, 512, NULL, log);
+			glGetShaderInfoLog(m_vertex_shader, 512, NULL, log);
 			std::cerr << log << std::endl;
 
 			return false;
@@ -186,12 +186,12 @@ void ShaderProgram::compile()
 
 void ShaderProgram::_clean_()
 {
-	glDeleteShader(vertex_shader);
-	glDeleteShader(fragment_shader);
+	glDeleteShader(m_vertex_shader);
+	glDeleteShader(m_fragment_shader);
 }
 
 ShaderProgram::~ShaderProgram()
 {
 	_clean_();
-	glDeleteProgram(shader_program);
+	glDeleteProgram(m_shader_program);
 }

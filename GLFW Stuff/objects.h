@@ -19,68 +19,68 @@ public:
 
 	int vertices_size()
 	{
-		return total_vertices * sizeof(float);
+		return m_total_vertices * sizeof(float);
 	}
 	int indices_size()
 	{
-		return total_indices * sizeof(unsigned);
+		return m_total_indices * sizeof(unsigned);
 	}
 
 	int isize()
 	{
-		return total_indices;
+		return m_total_indices;
 	}
 	int vsize()
 	{
-		return total_vertices;
+		return m_total_vertices;
 	}
 
 	virtual ~Object() = default;
 protected:
-	unsigned total_vertices = 0;
-	unsigned total_indices = 0;
+	unsigned m_total_vertices = 0;
+	unsigned m_total_indices = 0;
 
-	float* _vertices = nullptr;
-	unsigned* _indices = nullptr;
+	float* m_vertices = nullptr;
+	unsigned* m_indices = nullptr;
 };
 
 void Object::draw(GLFWwindow* window)
 {
-	glDrawElements(GL_TRIANGLES, total_indices, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, m_total_indices, GL_UNSIGNED_INT, 0);
 }
 
 void Object::set_vertices(float* verts, int size)
 {
-	if (_vertices)
-		delete[] _vertices;
+	if (m_vertices)
+		delete[] m_vertices;
 
-	total_vertices = size;
+	m_total_vertices = size;
 
-	_vertices = new float[size];
+	m_vertices = new float[size];
 	for (size_t i = 0; i < size; ++i)
-		_vertices[i] = verts[i];
+		m_vertices[i] = verts[i];
 }
 
 float* Object::get_vertices()
 {
-	return _vertices;
+	return m_vertices;
 }
 
 void Object::set_indices(unsigned* indcs, int size)
 {
-	if (_indices)
-		delete[] _indices;
+	if (m_indices)
+		delete[] m_indices;
 
-	total_indices = size;
+	m_total_indices = size;
 
-	_indices = new unsigned[size];
+	m_indices = new unsigned[size];
 	for (size_t i = 0; i < size; ++i)
-		_indices[i] = indcs[i];
+		m_indices[i] = indcs[i];
 }
 
 unsigned* Object::get_indices()
 {
-	return _indices;
+	return m_indices;
 }
 
 /*BAR object class*/
@@ -105,16 +105,16 @@ protected:
 	float remap(int, int);
 
 private:
-	int width;
-	int height;
+	int m_width;
+	int m_height;
 
-	int pos_x;
-	int pos_y;
+	int m_pos_x;
+	int m_pos_y;
 
-	int x_roof;
-	int y_roof;
+	int m_x_roof;
+	int m_y_roof;
 
-	float r, g, b;
+	float m_r, m_g, m_b;
 };
 
 Bar::Bar()
@@ -141,39 +141,39 @@ float Bar::remap(int val, int roof)
 
 void Bar::set_roof(int x, int y)
 {
-	x_roof = x;
-	y_roof = y;
+	m_x_roof = x;
+	m_y_roof = y;
 }
 
 void Bar::set_width(int val)
 {
-	width = val;
+	m_width = val;
 }
 
 void Bar::set_height(int val)
 {
-	height = val;
+	m_height = val;
 }
 
 void Bar::set_color(float red, float green, float blue)
 {
-	r = red;
-	g = green;
-	b = blue;
+	m_r = red;
+	m_g = green;
+	m_b = blue;
 }
 
 void Bar::set(int x, int y, int wdth, int hght)
 {
-	pos_x = x;
-	pos_y = y;
+	m_pos_x = x;
+	m_pos_y = y;
 
 	set_width(wdth);
 	set_height(hght);
 
-	float x_rm = remap(pos_x, x_roof) - 1.0f;
-	float y_rm = remap(pos_y, y_roof) - 1.0f;
-	float wdth_rm = remap(width, x_roof);
-	float hght_rm = remap(height, y_roof);
+	float x_rm = remap(m_pos_x, m_x_roof) - 1.0f;
+	float y_rm = remap(m_pos_y, m_y_roof) - 1.0f;
+	float wdth_rm = remap(m_width, m_x_roof);
+	float hght_rm = remap(m_height, m_y_roof);
 
 	float verts[] =
 	{
@@ -192,15 +192,15 @@ void Bar::set(int x, int y, int wdth, int hght)
 
 float Bar::get_color_r() const
 {
-	return r;
+	return m_r;
 }
 
 float Bar::get_color_g() const
 {
-	return g;
+	return m_g;
 }
 
 float Bar::get_color_b() const
 {
-	return b;
+	return m_b;
 }
