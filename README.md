@@ -7,6 +7,6 @@ Currently, this project only supports windows 64-bit platform :( To compile,
 3) Download the libraries from the release section and extract it to the repository folder.
 4) Compile the project or make changes according to your needs. :)
 5) After compiling, copy the shaders folder in 'GLFW Stuff/' to the binary folder.
-
+6) Pass a song filename and enjoy :) __NOTE: MP3 IS NOT SUPPORTED.__
 ## Copyrights
 This project is completely free to be used in any way you want without any royalty.
