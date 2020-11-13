@@ -19,7 +19,7 @@ int Bar_Width = 4;
 int Bar_Height = 1;
 int Bar_Gap = 1;
 
-int Height_multiplier = 15;
+int Height_multiplier = 25;
 float Red = 0.f;
 float Green = 0.f;
 float Blue = 0.f;
