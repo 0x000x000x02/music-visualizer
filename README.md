@@ -13,8 +13,8 @@ A simple music visualizer made in C++
 
 ### Linux
 1) Download and install the following packages:
-  - libsfml-dev
-  - libglfw3-dev
+      - `libsfml-dev`
+      - `libglfw3-dev`
 2) Clone [zsiciarz/aquila](https://github.com/zsiciarz/aquila). Then compile and install aquila.
 3) Execute build.sh.
 4) Pass a song filename and enjoy :) __NOTE: MP3 IS NOT SUPPORTED.__
