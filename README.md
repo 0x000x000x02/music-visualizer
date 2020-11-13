@@ -20,7 +20,7 @@ A simple music visualizer made in C++
 4) Pass a song filename and enjoy :) __NOTE: MP3 IS NOT SUPPORTED.__
 
 ## Screenshot
-![Screenshot](images/screenshot.gif)
+![Screenshot](images/visualizer.gif)
 
 ## Copyrights
 This project is completely free to be used in any way you want without any royalty.
