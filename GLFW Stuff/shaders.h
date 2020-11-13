@@ -4,8 +4,8 @@
 #include <string>
 #include <sstream>
 
-#include <GLAD/glad.h>
-#include <glfw/glfw3.h>
+#include "glad/glad.h"
+#include <GLFW/glfw3.h>
 
 class ShaderProgram
 {

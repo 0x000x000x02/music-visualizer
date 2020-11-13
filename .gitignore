@@ -40,3 +40,4 @@ GLFW Stuff/x64/*
 *.exe
 *.out
 *.app
+main

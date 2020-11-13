@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include <Aquila/Aquila.h>
+#include <aquila/aquila.h>
 #include <SFML/Audio.hpp>
 
 #include "objects.h"
