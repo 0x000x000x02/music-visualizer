@@ -3,6 +3,7 @@ x64/*
 .vs/*
 libs/*
 GLFW Stuff/x64/*
+build/*
 
 #Extra files
 *.zip
