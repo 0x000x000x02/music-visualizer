@@ -137,7 +137,7 @@ int main(int argc, char ** argv)
 	glEnableVertexAttribArray(0);
 
 	//Get the uniform variable color's location in the shader program.
-	int color = glGetUniformLocation(shader.get_program(), "color");
+	//int color = glGetUniformLocation(shader.get_program(), "color");
 /**********************************************/
 
 	audio.play();
