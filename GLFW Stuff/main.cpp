@@ -10,16 +10,16 @@ using namespace std;
 
 //Windths and heights in pixels
 //You can change the value of these variables and compile it yourself to get different results :)
-const unsigned WINDOW_WIDTH = 640;
-const unsigned WINDOW_HEIGHT = 480;
-const unsigned FFT_SIZE = 2048;
-const unsigned NUMBER_OF_BARS = 128;
-const unsigned SAMPLE_SIZE = 16384;
-int Bar_Width = 4;
+constexpr unsigned WINDOW_WIDTH = 1024;
+constexpr unsigned WINDOW_HEIGHT = 720;
+constexpr unsigned FFT_SIZE = 4096;
+constexpr unsigned NUMBER_OF_BARS = 256;
+constexpr unsigned SAMPLE_SIZE = 32768;
+int Bar_Width = 3;
 int Bar_Height = 1;
 int Bar_Gap = 1;
 
-int Height_multiplier = 25;
+float Height_multiplier = 7;
 float Red = 0.f;
 float Green = 0.f;
 float Blue = 0.f;
@@ -63,7 +63,7 @@ int main(int argc, char ** argv)
 		glfwTerminate();
 		return -1;
 	}
-
+	std::ios::sync_with_stdio(false);
 	Aquila::AquilaFft fft(FFT_SIZE);
 	Aquila::SpectrumType spectrum;
 	Aquila::WaveFile file(argv[1]);
@@ -114,7 +114,7 @@ int main(int argc, char ** argv)
 	bar.set_roof(WINDOW_WIDTH, WINDOW_HEIGHT);
 	bar.set(0, 0, Bar_Width, Bar_Height);
 
-/***************BOILER PLATE*******************/
+/***************BUFFERS AND STUFF**************/
 /**********************************************/
 	unsigned vao, vbo, ebo;
 
@@ -137,7 +137,7 @@ int main(int argc, char ** argv)
 	glEnableVertexAttribArray(0);
 
 	//Get the uniform variable color's location in the shader program.
-	//int color = glGetUniformLocation(shader.get_program(), "color");
+	int color = glGetUniformLocation(shader.get_program(), "color");
 /**********************************************/
 
 	audio.play();
@@ -157,32 +157,31 @@ int main(int argc, char ** argv)
 		//Update the samples and calculate the fft to get the spectrum
 		copy_samples(file, (((float)audio.getPlayingOffset().asMilliseconds()/1000) * audio.getSampleRate()), samples, SAMPLE_SIZE);
 		spectrum = fft.fft(samples);
-
 		//Calculate the height
-		calculate_height(Height, NUMBER_OF_BARS, spectrum, file.getSampleFrequency(), PrevHeight);
+		calculate_height(Height, NUMBER_OF_BARS, spectrum, file.getSampleFrequency(), PrevHeight, FFT_SIZE);
 		copy(begin(Height), end(Height), begin(PrevHeight));
 
-		glClearColor(1.f, 1.f, 1.f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//Loops through each bar and changes its properties.
 		for (size_t i = 0; i < NUMBER_OF_BARS; ++i)
 		{
-			/*
+			
 			//Calculate colour values in a unique way(see the set_colour(int, float*, float*, float*) function).
 			set_color(((int)((float)glfwGetTime() * 10) % 20), &Red, &Green, &Blue);
 
 			//Gradient effect to the bars
 			Green += (float)i / ((float)NUMBER_OF_BARS * 1.5);
 			Blue += (float)i / ((float)NUMBER_OF_BARS * 1.5);
-			*/
+			
 
 			//Set the colours
 			bar.set_color(Red, Green, Blue);
-			bar.set(i * (Bar_Width + Bar_Gap), 0, Bar_Width, (float)(Height[i] * 100)/100 * Height_multiplier);
+			bar.set(i * (Bar_Width + Bar_Gap), 0, Bar_Width, (float)Height[i] * Height_multiplier);
 
 			//The buffers and uniform values must be updated on every iteration.
-			//glUniform3f(color, bar.get_color_r(), bar.get_color_g(), bar.get_color_b()); //Don't need this line since the color is constant. Uncomment this line if your adding dynamic colors.
+			glUniform3f(color, bar.get_color_r(), bar.get_color_g(), bar.get_color_b()); //Don't need this line since the color is constant. Uncomment this line if your adding dynamic colors.
 			glBufferData(GL_ARRAY_BUFFER, bar.vertices_size(), bar.get_vertices(), GL_DYNAMIC_DRAW);
 			bar.draw(window);
 		}
