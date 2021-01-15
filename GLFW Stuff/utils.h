@@ -28,7 +28,6 @@ static void calculate_height(float* height, int number_of_bars, const Aquila::Sp
 	static double smooth = 0.5;
 	static const size_t gap = fft_size/number_of_bars/2;
 
-	//Reading of FFT data starts from index 99 to index index 99 + number of bars.
 	for (int i = 0, j = 2; i < number_of_bars && j < fft_size; i++, j+=gap)
 	{
 		height[i] = ((float)std::abs(spectrum[j])) / freq;
