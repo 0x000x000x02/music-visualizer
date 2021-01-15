@@ -23,19 +23,21 @@ static void set_color(int val, float * r, float * g, float * b)
 	}
 }
 
-static void calculate_height(float* height, int number_of_bars, const Aquila::SpectrumType& spectrum, int freq, float prev_height[])
+static void calculate_height(float* height, int number_of_bars, const Aquila::SpectrumType& spectrum, int freq, float prev_height[], size_t fft_size)
 {
 	static double smooth = 0.5;
-	//Reading of FFT data starts from index 99 to index index 99 + 127.
-	for (int i = 99, j = 0; j < number_of_bars; i+=2, ++j)
+	static const size_t gap = fft_size/number_of_bars/2;
+
+	//Reading of FFT data starts from index 99 to index index 99 + number of bars.
+	for (int i = 0, j = 2; i < number_of_bars && j < fft_size; i++, j+=gap)
 	{
-		height[j] = (((float)std::abs(spectrum[i]) / freq) + ((float)std::abs(spectrum[i + 1]) / freq)) / 2;
-		if (j > 0)
+		height[i] = ((float)std::abs(spectrum[j])) / freq;
+		if (i > 0)
 		{
-			height[j] = (height[j - 1] * smooth) + (height[j] * (1 - smooth));
+			height[i] = (height[i - 1] * smooth) + (height[i] * (1 - smooth));
 		}
 
-		height[j] = prev_height[j] + (float)(height[j] - prev_height[j]) / 3;
+		height[i] = prev_height[i] + (float)(height[i] - prev_height[i]) / 3;
 	}
 }
 
