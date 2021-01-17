@@ -19,5 +19,8 @@ A simple music visualizer made in C++
 3) Execute build.sh.
 4) Pass a song filename and enjoy :) __NOTE: MP3 IS NOT SUPPORTED.__
 
+## Screenshot
+![visualizer-gif](images/visualizer.gif)
+
 ## Copyrights
 This project is completely free to be used in any way you want without any royalty.
