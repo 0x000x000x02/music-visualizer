@@ -7,22 +7,6 @@
 
 #include "objects.h"
 
-static void set_color(int val, float * r, float * g, float * b)
-{
-	if (val < 10)
-	{
-		*r = 0.f;
-		*g = 1.0f - ((float)val / 10);
-		*b = (float)val / 10;
-	}
-	else if (val >= 10 && val < 20)
-	{
-		*r = 0.f;
-		*g = (float)(val - 10) / 10;
-		*b = 1.0f - ((float)(val - 10) / 10);
-	}
-}
-
 static void calculate_height(float* height, int number_of_bars, const Aquila::SpectrumType& spectrum, int freq, float prev_height[], size_t fft_size)
 {
 	static double smooth = 0.5;

@@ -1,9 +1,13 @@
 #version 330 core
 
-uniform vec3 color;
+uniform int width;
+uniform int height;
+uniform float time;
+uniform int bar_index;
+
 out vec4 fragColor;
 
 void main()
 {
-	fragColor = vec4(color, 1.0);
+	fragColor = vec4(0.4, 0.4, 0.4, 1.0);
 }

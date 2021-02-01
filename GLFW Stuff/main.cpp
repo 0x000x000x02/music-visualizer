@@ -73,8 +73,11 @@ int main(int argc, char ** argv)
 	for (size_t i = 0; i < NUMBER_OF_BARS; ++i)
 		PrevHeight[i] = 0.f;
 
-	audio.openFromFile(argv[1]);
-
+	if (!audio.openFromFile(argv[1])) {
+		cerr << "Error opening music file!" << endl;
+		return 2;
+	}
+	
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -136,9 +139,18 @@ int main(int argc, char ** argv)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(0));
 	glEnableVertexAttribArray(0);
 
-	//Get the uniform variable color's location in the shader program.
-	int color = glGetUniformLocation(shader.get_program(), "color");
 /**********************************************/
+
+	//Get the uniform value locations
+	int indexLocation = glGetUniformLocation(shader.get_program(), "bar_index");
+	int widthLocation = glGetUniformLocation(shader.get_program(), "width");
+	int heightLocation = glGetUniformLocation(shader.get_program(), "height");
+	int timeLocation = glGetUniformLocation(shader.get_program(), "time");
+	int totalBarsLocation = glGetUniformLocation(shader.get_program(), "total_bars");
+
+	glUniform1i(widthLocation, WINDOW_WIDTH);
+	glUniform1i(heightLocation, WINDOW_HEIGHT);
+	glUniform1i(totalBarsLocation, NUMBER_OF_BARS);
 
 	audio.play();
 
@@ -167,21 +179,18 @@ int main(int argc, char ** argv)
 		//Loops through each bar and changes its properties.
 		for (size_t i = 0; i < NUMBER_OF_BARS; ++i)
 		{
-			
-			//Calculate colour values in a unique way(see the set_colour(int, float*, float*, float*) function).
-			set_color(((int)((float)glfwGetTime() * 10) % 20), &Red, &Green, &Blue);
 
 			//Gradient effect to the bars
 			Green += (float)i / ((float)NUMBER_OF_BARS * 1.5);
 			Blue += (float)i / ((float)NUMBER_OF_BARS * 1.5);
 			
-
 			//Set the colours
 			bar.set_color(Red, Green, Blue);
 			bar.set(i * (Bar_Width + Bar_Gap), 0, Bar_Width, (float)Height[i] * Height_multiplier);
 
 			//The buffers and uniform values must be updated on every iteration.
-			glUniform3f(color, bar.get_color_r(), bar.get_color_g(), bar.get_color_b()); //Don't need this line since the color is constant. Uncomment this line if your adding dynamic colors.
+			glUniform1i(indexLocation, i);
+			glUniform1f(timeLocation, glfwGetTime() * 1000);
 			glBufferData(GL_ARRAY_BUFFER, bar.vertices_size(), bar.get_vertices(), GL_DYNAMIC_DRAW);
 			bar.draw(window);
 		}

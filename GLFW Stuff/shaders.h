@@ -160,13 +160,13 @@ bool ShaderProgram::_compile_(int type)
 
 		//Get compile status and check for errors.
 		int status;
-		glGetShaderiv(m_vertex_shader, GL_COMPILE_STATUS, &status);
+		glGetShaderiv(m_fragment_shader, GL_COMPILE_STATUS, &status);
 		if (!status)
 		{
 			char log[512];
 
 			//Get the log and print it to console output.
-			glGetShaderInfoLog(m_vertex_shader, 512, NULL, log);
+			glGetShaderInfoLog(m_fragment_shader, 512, NULL, log);
 			std::cerr << log << std::endl;
 
 			return false;
