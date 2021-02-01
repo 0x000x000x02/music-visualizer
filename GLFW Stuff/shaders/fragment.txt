@@ -4,10 +4,26 @@ uniform int width;
 uniform int height;
 uniform float time;
 uniform int bar_index;
+uniform int total_bars;
 
 out vec4 fragColor;
 
+vec3 getColors(float tx) {
+	float v = int(tx)%200;
+	if(v > 100) v = 200 - v;
+	
+	vec3 ret;
+	ret.g = float(v)/200;
+	ret.b = 1.0 - (float(v)/200);
+	return ret;
+}
+
 void main()
 {
-	fragColor = vec4(0.4, 0.4, 0.4, 1.0);
+	float timeVal = time/10;
+	vec3 c;
+	c = getColors(timeVal);
+	c.b = c.b + (float(bar_index)/total_bars * 0.8);
+	c.g = c.g + (float(bar_index)/total_bars * 0.8);
+	fragColor = vec4(c, 1.0);
 }
