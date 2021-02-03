@@ -1,5 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-GLFW Stuff/glad/* -linguist-vendored
-GLFW Stuff/KHR/* -linguist-vendored
-GLFW Stuff/glad.c -linguist-vendored
+'GLFW Stuff/glad/*' linguist-vendored
+'GLFW Stuff/KHR/*' linguist-vendored
+'GLFW Stuff/glad.c' linguist-vendored
