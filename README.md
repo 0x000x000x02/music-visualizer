@@ -22,5 +22,5 @@ A simple music visualizer made in C++
 ## Screenshot
 ![visualizer-gif](images/visualizer-updated.gif)
 
-## Copyrights
+## License
 This project is completely free to be used in any way you want without any royalty.
