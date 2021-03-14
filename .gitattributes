@@ -1,5 +1,5 @@
 # Auto detect text files and perform LF normalization
 
-GLFW[:space:]Stuff/glad/glad.h linguist-vendored=true
-GLFW[:space:]Stuff/KHR/khrplatform.h linguist-vendored
-GLFW[:space:]Stuff/glad.c linguist-vendored
+GLFW?Stuff/glad/glad.h linguist-vendored
+GLFW?Stuff/KHR/khrplatform.h linguist-vendored
+GLFWStuff/glad.c linguist-vendored
