@@ -23,11 +23,12 @@ public:
 		return m_shader_program;
 	}
 
-	~ShaderProgram();
+	void deleteShaders();
+
+	~ShaderProgram() = default;
 protected:
 	void init();
 	bool _compile_(int type);
-	void _clean_();
 
 private:
 	unsigned m_vertex_shader = 0;
@@ -184,14 +185,9 @@ void ShaderProgram::compile()
 	_compile_(0);
 }
 
-void ShaderProgram::_clean_()
+void ShaderProgram::deleteShaders()
 {
 	glDeleteShader(m_vertex_shader);
 	glDeleteShader(m_fragment_shader);
-}
-
-ShaderProgram::~ShaderProgram()
-{
-	_clean_();
 	glDeleteProgram(m_shader_program);
 }

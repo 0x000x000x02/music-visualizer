@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-
+#include <cstdlib>
 #include "objects.h"
 #include "shaders.h"
 #include "utils.h"
@@ -10,19 +10,15 @@ using namespace std;
 
 //Widths and heights in pixels
 //You can change the value of these variables and compile it yourself to get different results :)
-constexpr unsigned WINDOW_WIDTH = 1024;
-constexpr unsigned WINDOW_HEIGHT = 720;
-constexpr unsigned FFT_SIZE = 4096;
-constexpr unsigned NUMBER_OF_BARS = 256;
-constexpr unsigned SAMPLE_SIZE = 32768;
-int Bar_Width = 3;
-int Bar_Height = 1;
-int Bar_Gap = 1;
+constexpr unsigned WINDOW_WIDTH = 800;
+constexpr unsigned WINDOW_HEIGHT = 600;
+constexpr unsigned FFT_SIZE = 512;
+constexpr unsigned NUMBER_OF_BARS = 240;
+constexpr unsigned SAMPLE_SIZE = 8192;
+constexpr int Bar_Width = 3;
+constexpr int Bar_Gap = 1;
 
-float Height_multiplier = 7;
-float Red = 0.f;
-float Green = 0.f;
-float Blue = 0.f;
+constexpr float Height_multiplier = 10;
 
 //The program loops if this is true, else clean everything up and exit
 bool Is_playing = true;
@@ -40,7 +36,7 @@ void framebuffersize_callback(GLFWwindow* window, int width, int height)
 
 void process_inputs(GLFWwindow * _window, sf::Music * _music)
 {
-	if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_ESCAPE))
+	if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_Q) == GLFW_PRESS)
 		Is_playing = false;
 	if (glfwGetKey(_window, GLFW_KEY_P) == GLFW_PRESS)
 	{
@@ -63,20 +59,19 @@ int main(int argc, char ** argv)
 		glfwTerminate();
 		return -1;
 	}
-	std::ios::sync_with_stdio(false);
 	Aquila::AquilaFft fft(FFT_SIZE);
 	Aquila::SpectrumType spectrum;
+	Aquila::SignalSource source;
 	sf::Music audio;
-	double samples[SAMPLE_SIZE];
-
-	for (size_t i = 0; i < NUMBER_OF_BARS; ++i)
-		PrevHeight[i] = 0.f;
-
 	if (!audio.openFromFile(argv[1])) {
 		cerr << "Error opening music file!" << endl;
 		return 2;
 	}
-	Aquila::WaveFile file(argv[1]);
+	Aquila::WaveFile file(argv[1]);;
+	double samples[SAMPLE_SIZE];
+
+	for (size_t i = 0; i < NUMBER_OF_BARS; ++i)
+		PrevHeight[i] = 0.f;
 	
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -105,8 +100,8 @@ int main(int argc, char ** argv)
 	glfwSetFramebufferSizeCallback(window, framebuffersize_callback);
 
 	ShaderProgram shader;
-	fstream frag("shaders/fragment.txt");
-	fstream vert("shaders/vertex.txt");
+	fstream frag("./shaders/fragment.txt");
+	fstream vert("./shaders/vertex.txt");
 	shader.loadFragmentShaderSource(frag);
 	shader.loadVertexShaderSource(vert);
 	shader.compile();
@@ -115,7 +110,7 @@ int main(int argc, char ** argv)
 	Bar bar;
 	//Set the window's width and height as the bar's maximum mapping value.
 	bar.set_roof(WINDOW_WIDTH, WINDOW_HEIGHT);
-	bar.set(0, 0, Bar_Width, Bar_Height);
+	bar.set(0, 0, Bar_Width, 1);
 
 /***************BUFFERS AND STUFF**************/
 /**********************************************/
@@ -147,7 +142,6 @@ int main(int argc, char ** argv)
 	int heightLocation = glGetUniformLocation(shader.get_program(), "height");
 	int timeLocation = glGetUniformLocation(shader.get_program(), "time");
 	int totalBarsLocation = glGetUniformLocation(shader.get_program(), "total_bars");
-
 	glUniform1i(widthLocation, WINDOW_WIDTH);
 	glUniform1i(heightLocation, WINDOW_HEIGHT);
 	glUniform1i(totalBarsLocation, NUMBER_OF_BARS);
@@ -169,6 +163,7 @@ int main(int argc, char ** argv)
 		//Update the samples and calculate the fft to get the spectrum
 		copy_samples(file, (((float)audio.getPlayingOffset().asMilliseconds()/1000) * audio.getSampleRate()), samples, SAMPLE_SIZE);
 		spectrum = fft.fft(samples);
+		fft.ifft(spectrum, samples);
 		//Calculate the height
 		calculate_height(Height, NUMBER_OF_BARS, spectrum, file.getSampleFrequency(), PrevHeight, FFT_SIZE);
 		copy(begin(Height), end(Height), begin(PrevHeight));
@@ -179,13 +174,7 @@ int main(int argc, char ** argv)
 		//Loops through each bar and changes its properties.
 		for (size_t i = 0; i < NUMBER_OF_BARS; ++i)
 		{
-
-			//Gradient effect to the bars
-			Green += (float)i / ((float)NUMBER_OF_BARS * 1.5);
-			Blue += (float)i / ((float)NUMBER_OF_BARS * 1.5);
-			
 			//Set the colours
-			bar.set_color(Red, Green, Blue);
 			bar.set(i * (Bar_Width + Bar_Gap), 0, Bar_Width, (float)Height[i] * Height_multiplier);
 
 			//The buffers and uniform values must be updated on every iteration.
@@ -198,6 +187,7 @@ int main(int argc, char ** argv)
 		glfwPollEvents();
 	}
 
+	shader.deleteShaders();
 	glfwTerminate();
 	return 0;
 }
