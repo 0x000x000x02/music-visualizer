@@ -8,7 +8,7 @@
 
 using namespace std;
 
-//Windths and heights in pixels
+//Widths and heights in pixels
 //You can change the value of these variables and compile it yourself to get different results :)
 constexpr unsigned WINDOW_WIDTH = 1024;
 constexpr unsigned WINDOW_HEIGHT = 720;
@@ -66,7 +66,6 @@ int main(int argc, char ** argv)
 	std::ios::sync_with_stdio(false);
 	Aquila::AquilaFft fft(FFT_SIZE);
 	Aquila::SpectrumType spectrum;
-	Aquila::WaveFile file(argv[1]);
 	sf::Music audio;
 	double samples[SAMPLE_SIZE];
 
@@ -77,6 +76,7 @@ int main(int argc, char ** argv)
 		cerr << "Error opening music file!" << endl;
 		return 2;
 	}
+	Aquila::WaveFile file(argv[1]);
 	
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
