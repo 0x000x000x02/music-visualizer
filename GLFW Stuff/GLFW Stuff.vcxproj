@@ -80,12 +80,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>$(solutionDir)\libs\aquila\build\Debug;$(solutionDir)\libs\SFML\build\lib\Debug;$(solutionDir)\libs\glfw\build\src\Debug;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(solutionDir)\libs\glad\include;$(solutionDir)\libs\sfml\include;$(solutionDir)\libs\aquila\include;$(solutionDir)\libs\glfw\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(solutionDir);$(solutionDir)\libs\glad\include;$(solutionDir)\libs\sfml\include;$(solutionDir)\libs\aquila\include;$(solutionDir)\libs\glfw\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>$(solutionDir)\libs\SFML\build\lib\Release;$(solutionDir)\libs\aquila\build\Release;$(solutionDir)\libs\glfw\build\src\Release;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(solutionDir)\libs\glad\include;$(solutionDir)\libs\glfw\include;$(solutionDir)\libs\sfml\include;$(solutionDir)\libs\aquila\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(solutionDir);$(solutionDir)\libs\glad\include;$(solutionDir)\libs\glfw\include;$(solutionDir)\libs\sfml\include;$(solutionDir)\libs\aquila\include;$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

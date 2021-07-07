@@ -18,7 +18,7 @@ constexpr unsigned SAMPLE_SIZE = 8192;
 constexpr int Bar_Width = 3;
 constexpr int Bar_Gap = 1;
 
-constexpr float Height_multiplier = 10;
+constexpr float Height_multiplier = 1000;
 
 //The program loops if this is true, else clean everything up and exit
 bool Is_playing = true;

@@ -14,22 +14,22 @@ static void calculate_height(float height[], int number_of_bars, const Aquila::S
 
 	for (int i = 0; i < number_of_bars; i++)
 	{
-		height[i] = ((float)std::abs(spectrum[i+8])) / freq;
+		height[i] = ((float)std::abs(spectrum[i+gap])) / freq;
 		if (i > 0)
 		{
 			height[i] = (height[i - 1] * smooth) + (height[i] * (1 - smooth));
 		}
 
-		height[i] = prev_height[i] + (float)(height[i] - prev_height[i]) / 10;
+		height[i] = prev_height[i] + (float)(height[i] - prev_height[i]) / 8;
 	}
 }
 
 static void copy_samples(const Aquila::WaveFile & audio, int offset, double samples[], unsigned sample_size)
 {
 	Aquila::Frame frame(audio, offset, offset + sample_size);
-	static const Aquila::HammingWindow hwindow(sample_size);
+	static Aquila::BlackmanWindow window(sample_size);
 
 	for(size_t i = 0; i < sample_size; ++i) {
-		samples[i] = frame.sample(i);
+		samples[i] = window.sample(i) * frame.sample(i);
 	}
 }
