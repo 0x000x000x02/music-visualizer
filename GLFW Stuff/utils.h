@@ -27,7 +27,7 @@ static void calculate_height(float height[], int number_of_bars, const Aquila::S
 static void copy_samples(const Aquila::WaveFile & audio, int offset, double samples[], unsigned sample_size)
 {
 	Aquila::Frame frame(audio, offset, offset + sample_size);
-	static Aquila::BlackmanWindow window(sample_size);
+	static Aquila::HammingWindow window(sample_size);
 
 	for(size_t i = 0; i < sample_size; ++i) {
 		samples[i] = window.sample(i) * frame.sample(i);

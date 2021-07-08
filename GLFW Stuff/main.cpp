@@ -12,13 +12,13 @@ using namespace std;
 //You can change the value of these variables and compile it yourself to get different results :)
 constexpr unsigned WINDOW_WIDTH = 800;
 constexpr unsigned WINDOW_HEIGHT = 600;
-constexpr unsigned FFT_SIZE = 512;
+constexpr unsigned FFT_SIZE = 2048;
 constexpr unsigned NUMBER_OF_BARS = 240;
-constexpr unsigned SAMPLE_SIZE = 8192;
+constexpr unsigned SAMPLE_SIZE = 16384;
 constexpr int Bar_Width = 3;
 constexpr int Bar_Gap = 1;
 
-constexpr float Height_multiplier = 1000;
+constexpr float Height_multiplier = 50;
 
 //The program loops if this is true, else clean everything up and exit
 bool Is_playing = true;
