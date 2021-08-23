@@ -14,7 +14,7 @@ constexpr unsigned WINDOW_WIDTH = 800;
 constexpr unsigned WINDOW_HEIGHT = 600;
 constexpr unsigned FFT_SIZE = 2048;
 constexpr unsigned NUMBER_OF_BARS = 240;
-constexpr unsigned SAMPLE_SIZE = 16384;
+constexpr unsigned SAMPLE_SIZE = 8192;
 constexpr int Bar_Width = 3;
 constexpr int Bar_Gap = 1;
 
