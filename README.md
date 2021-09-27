@@ -11,6 +11,8 @@ A simple music visualizer made in C++
 5) After compiling, copy the shaders folder in 'GLFW Stuff/' to the binary folder.
 6) Pass a song filename and enjoy.
 
+Status [![Windows](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/msbuild.yml/badge.svg)](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/msbuild.yml)
+
 ### Linux
 1) Download and install the following packages:
       - `libsfml-dev`
