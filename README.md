@@ -6,9 +6,9 @@ A simple music visualizer made in C++
 ### Windows x64
 1) Download and install Visual Studio 2019 with C++ Develeopment enabled on your computer.
 2) Clone the repository.
-3) Download the libraries from the release section and extract it to the repository folder.
-4) Compile the project or make changes according to your needs :)
-5) After compiling, copy the shaders folder in 'GLFW Stuff/' to the binary folder.
+3) Compile the project or make changes according to your needs :)
+4) After compiling, copy the shaders folder in 'GLFW Stuff/' to the binary folder.
+5) Copy the DLL files too found `libs/`.
 6) Pass a song filename and enjoy.
 
 Status [![Windows](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/msbuild.yml/badge.svg)](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/msbuild.yml)
