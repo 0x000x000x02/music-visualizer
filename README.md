@@ -16,7 +16,9 @@ A simple music visualizer made in C++
 
 __NOTE__: Replace the `Release` with `Debug` for the debug config.
 
-[![CMake Release](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/cmake.yml/badge.svg)](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/cmake.yml)
+[![CMake Debug](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/cmake-windows-debug.yml/badge.svg)](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/cmake-windows-debug.yml)
+
+[![CMake Release](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/cmake-windows-release.yml/badge.svg)](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/cmake-windows-release.yml)
 
 ## Screenshot
 ![visualizer-gif](images/visualizer-updated.gif)
