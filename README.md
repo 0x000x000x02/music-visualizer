@@ -4,22 +4,19 @@ A simple music visualizer made in C++
 ## Compiling
 
 ### Windows x64
-1) Download and install Visual Studio 2019 with C++ Develeopment enabled on your computer.
+1) Install CMake and Visual Studio 2019.
 2) Clone the repository.
-3) Compile the project or make changes according to your needs :)
-4) After compiling, copy the shaders folder in 'GLFW Stuff/' to the binary folder.
-5) Copy the DLL files too found `libs/`.
-6) Pass a song filename and enjoy.
+3) Open Command Prompt and cd into the repo folder.
+4) Create a build directory using `mkdir build`
+5) Cd into the build folder using `cd build`.
+6) Execute the following command to configure
+     ```cmake -DCMAKE_BUILD_TYPE=Release .. # Release config```
+7) Execute the following command to build ```cmake --build . --config Release```
+8) Execute the following command to install ```cmake --install . --config Release --prefix <install-directory>```
 
-Status [![Windows](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/msbuild.yml/badge.svg)](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/msbuild.yml)
+__NOTE__: Replace the `Release` with `Debug` for the debug config.
 
-### Linux
-1) Download and install the following packages:
-      - `libsfml-dev`
-      - `libglfw3-dev`
-2) Clone aquila from [zsiciarz/aquila](https://github.com/zsiciarz/aquila). Then compile and install it. (Linux binaries and includes are already included.)
-3) Execute build.sh.
-4) Pass a song filename and enjoy.
+[![CMake Release](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/cmake.yml/badge.svg)](https://github.com/dotslashinit-sh/music-visualizer/actions/workflows/cmake.yml)
 
 ## Screenshot
 ![visualizer-gif](images/visualizer-updated.gif)
