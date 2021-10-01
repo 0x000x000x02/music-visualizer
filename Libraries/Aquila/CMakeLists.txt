@@ -9,11 +9,11 @@ target_include_directories (Aquila INTERFACE "${CMAKE_CURRENT_LIST_DIR}/Include"
 if (MSVC)
     # Seperate debug and release configurations for windows.
     if (CMAKE_BUILD_TYPE MATCHES "Debug")
-        set (Aquila_LIB_DIR "Windows/Libraries/Release")
-        set (Aquila_LIB "Aquila.lib")
-    else ()
         set (Aquila_LIB_DIR "Windows/Libraries/Debug")
         set (Aquila_LIB "Aquila-d.lib")
+    else ()
+        set (Aquila_LIB_DIR "Windows/Libraries/Release")
+        set (Aquila_LIB "Aquila.lib")
     endif ()
 elseif (UNIX)
     # Unix configuration to be added soon...
