@@ -4,7 +4,7 @@ A simple music visualizer made in C++
 ## Compiling
 
 ### Windows x64
-1) Install CMake and Visual Studio 2019.
+1) Install CMake and Visual Studio 2019 / 2022.
 2) Clone the repository.
 3) Open Command Prompt and cd into the repo folder.
 4) Create a build directory using `mkdir build`
