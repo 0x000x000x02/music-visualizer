@@ -25,7 +25,7 @@ __NOTE__: Replace the `Release` with `Debug` for the debug config.
 
 ## Note
 - I made this project during my free time. I know this project contains a lot of broken code but I am still learning and I promise to get better.
-- MP3 is not supported.
+- MP3 is not supported. The recommended format is FLAC.
 
 ## License
 This project is completely free to be used in any way you want without any royalty.
