@@ -10,9 +10,9 @@ A simple music visualizer made in C++
 4) Create a build directory using `mkdir build`
 5) Cd into the build folder using `cd build`.
 6) Execute the following command to configure
-     ```cmake -DCMAKE_BUILD_TYPE=Release .. # Release config```
-7) Execute the following command to build ```cmake --build . --config Release```
-8) Execute the following command to install ```cmake --install . --config Release --prefix <install-directory>```
+     `cmake -DCMAKE_BUILD_TYPE=Release ..`
+7) Execute the following command to build `cmake --build . --config Release`
+9) Execute the following command to install `cmake --install . --config Release --prefix <install-directory>`
 
 __NOTE__: Replace the `Release` with `Debug` for the debug config.
 
