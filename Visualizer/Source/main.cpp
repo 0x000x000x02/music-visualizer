@@ -19,7 +19,7 @@ constexpr unsigned SAMPLE_SIZE = 4096;
 constexpr int Bar_Width = 3;
 constexpr int Bar_Gap = 1;
 
-constexpr float Height_multiplier = 10;
+constexpr float Height_multiplier = 500;
 
 //The program loops if this is true, else clean everything up and exit
 bool Is_playing = true;
@@ -60,10 +60,10 @@ int main(int argc, char ** argv)
 	else
 		filename = argv[1];
 
-	std::complex<int16_t> frame[SAMPLE_SIZE];
+	SpctType frame[SAMPLE_SIZE];
 	double Height[NUMBER_OF_BARS];
 	double PrevHeight[NUMBER_OF_BARS];
-	std::complex<int16_t> spectrum[FFT_SIZE];
+	SpctType spectrum[FFT_SIZE];
 	kissfft<int16_t> fft(FFT_SIZE, false);
 
 	sf::SoundBuffer audioBuffer;
@@ -169,7 +169,6 @@ int main(int argc, char ** argv)
 		fft.transform(frame, spectrum);
 		//Calculate the height
 		calculateHeight(Height, PrevHeight, NUMBER_OF_BARS, spectrum, audioBuffer.getSampleRate(), FFT_SIZE);
-		std::cout << Height[2] << std::endl;
 		copy(begin(Height), end(Height), begin(PrevHeight));
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);

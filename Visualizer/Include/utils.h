@@ -2,34 +2,47 @@
 
 #include <cmath>
 #include <cstdio>
+#include <algorithm>
 #include <kissfft.hh>
 #include <SFML/Audio.hpp>
 
 #include <objects.h>
 
-static void calculateHeight(double height[], double prevHeight[], const int barCount, const std::complex<int16_t> * spectrum, int sampleFrequency, size_t fftSize)
+#define PI 3.1415926535
+
+#define SpctType std::complex<int16_t>
+
+static void calculateHeight(double height[], double prevHeight[], const int barCount, const SpctType * spectrum, int sampleFrequency, size_t fftSize)
 {
 	static const double smooth = 0.5;
 	static const size_t gap = fftSize/barCount/2;
+	double fMax = 0;
+
+	// Get the max frequency
+	for (int i = 1; i < barCount; i++)
+		fMax = std::max(height[i-1], height[i]);
 
 	for (int i = 0; i < barCount; i++)
 	{
-		height[i] = double(std::abs(spectrum[i + 1])) / sampleFrequency;
+		height[i] = std::pow(height[i] / 12, 0.5) * 1.0/fMax;
+		height[i] = double(spectrum[i + 1 + gap].real()) / sampleFrequency;
 		if (i > 0)
 		{
 			height[i] = (height[i - 1] * smooth) + (height[i] * (1 - smooth));
 		}
 
-		height[i] *= 1000;
-		height[i] = prevHeight[i] + (float)(height[i] - prevHeight[i]) / 3;
+		height[i] = (height[i] < 0) ? height[i] * -1 : height[i];
+
+		height[i] = prevHeight[i] + (double)(height[i] - prevHeight[i]) / 8;
 	}
 }
 
-static void copySamples(int offset, const sf::Int16 * buffer, size_t bufferSize , std::complex<int16_t> * frame, unsigned frameSize)
+static void copySamples(int offset, const sf::Int16 * buffer, size_t bufferSize , SpctType * frame, unsigned frameSize)
 {
 	for(size_t i = 0; i < frameSize; i++)
 	{
-		frame[i].real((offset+i < bufferSize) ? buffer[offset+i] : 0);
-		frame[i].imag((offset+i < bufferSize) ? buffer[offset+i] : 0);
+		double multiplier = 0.5 * cos(2*PI*i / (frameSize-1));
+		frame[i].real((offset+i < bufferSize) ? (multiplier * buffer[offset+i]) : 0);
+		frame[i].imag(0);
 	}
 }
