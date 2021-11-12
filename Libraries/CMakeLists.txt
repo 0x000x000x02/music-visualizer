@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 3.9)
 # SFML.
 add_subdirectory("SFML")
 
-# Aquila.
-add_subdirectory("Aquila")
+# kissfft
+add_subdirectory("kissfft")
 
 # GLFW.
 add_subdirectory("GLFW")

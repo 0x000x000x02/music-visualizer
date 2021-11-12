@@ -4,6 +4,7 @@ x64/*
 GLFW Stuff/x64/*
 build/*
 out/*
+.vscode/*
 
 #Extra files
 *.zip

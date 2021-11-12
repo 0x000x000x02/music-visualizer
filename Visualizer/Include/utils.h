@@ -2,34 +2,34 @@
 
 #include <cmath>
 #include <cstdio>
-#include <aquila/aquila.h>
+#include <kissfft.hh>
 #include <SFML/Audio.hpp>
 
 #include <objects.h>
 
-static void calculate_height(float height[], int number_of_bars, const Aquila::SpectrumType& spectrum, int freq, float prev_height[], size_t fft_size)
+static void calculateHeight(double height[], double prevHeight[], const int barCount, const std::complex<int16_t> * spectrum, int sampleFrequency, size_t fftSize)
 {
 	static const double smooth = 0.5;
-	static const size_t gap = fft_size/number_of_bars/2;
+	static const size_t gap = fftSize/barCount/2;
 
-	for (int i = 0; i < number_of_bars; i++)
+	for (int i = 0; i < barCount; i++)
 	{
-		height[i] = ((float)std::abs(spectrum[i+gap])) / freq;
+		height[i] = double(std::abs(spectrum[i + 1])) / sampleFrequency;
 		if (i > 0)
 		{
 			height[i] = (height[i - 1] * smooth) + (height[i] * (1 - smooth));
 		}
 
-		height[i] = prev_height[i] + (float)(height[i] - prev_height[i]) / 8;
+		height[i] *= 1000;
+		height[i] = prevHeight[i] + (float)(height[i] - prevHeight[i]) / 3;
 	}
 }
 
-static void copy_samples(const Aquila::WaveFile & audio, int offset, double samples[], unsigned sample_size)
+static void copySamples(int offset, const sf::Int16 * buffer, size_t bufferSize , std::complex<int16_t> * frame, unsigned frameSize)
 {
-	Aquila::Frame frame(audio, offset, offset + sample_size);
-	static Aquila::HammingWindow window(sample_size);
-
-	for(size_t i = 0; i < sample_size; ++i) {
-		samples[i] = window.sample(i) * frame.sample(i);
+	for(size_t i = 0; i < frameSize; i++)
+	{
+		frame[i].real((offset+i < bufferSize) ? buffer[offset+i] : 0);
+		frame[i].imag((offset+i < bufferSize) ? buffer[offset+i] : 0);
 	}
 }

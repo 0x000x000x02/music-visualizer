@@ -13,13 +13,13 @@ using namespace std;
 //You can change the value of these variables and compile it yourself to get different results :)
 constexpr unsigned WINDOW_WIDTH = 800;
 constexpr unsigned WINDOW_HEIGHT = 600;
-constexpr unsigned FFT_SIZE = 2048;
+constexpr unsigned FFT_SIZE = 512;
 constexpr unsigned NUMBER_OF_BARS = 240;
-constexpr unsigned SAMPLE_SIZE = 8192;
+constexpr unsigned SAMPLE_SIZE = 4096;
 constexpr int Bar_Width = 3;
 constexpr int Bar_Gap = 1;
 
-constexpr float Height_multiplier = 50;
+constexpr float Height_multiplier = 10;
 
 //The program loops if this is true, else clean everything up and exit
 bool Is_playing = true;
@@ -27,24 +27,21 @@ bool Is_playing = true;
 const string TITLE = "Visualizer";
 const string DEBUG_INFO = "Graphics Libraries: GLFW and GLAD\nAudio processing: Aquila\nAudio: SFML\n";
 
-float Height[NUMBER_OF_BARS];
-float PrevHeight[NUMBER_OF_BARS];
-
 void framebuffersize_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
 
-void process_inputs(GLFWwindow * _window, sf::Music * _music)
+void process_inputs(GLFWwindow * _window, sf::Sound * _sound)
 {
 	if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_Q) == GLFW_PRESS)
 		Is_playing = false;
 	if (glfwGetKey(_window, GLFW_KEY_P) == GLFW_PRESS)
 	{
-		if (_music->getStatus() == sf::Music::Paused)
-			_music->play();
+		if (_sound->getStatus() == sf::Sound::Paused)
+			_sound->play();
 		else
-			_music->pause();
+			_sound->pause();
 	}
 }
 
@@ -55,7 +52,6 @@ int main(int argc, char ** argv)
 #endif
 
 	string filename;
-
 	if (argc < 2)
 	{
 		cout << "Enter a valid music file: " << endl;
@@ -64,28 +60,29 @@ int main(int argc, char ** argv)
 	else
 		filename = argv[1];
 
-	Aquila::AquilaFft fft(FFT_SIZE);
-	Aquila::SpectrumType spectrum;
-	Aquila::SignalSource source;
-	sf::Music audio;
-	if (!audio.openFromFile(argv[1])) {
-		cerr << "Error opening music file!" << endl;
-		return 2;
-	}
-	Aquila::WaveFile file(argv[1]);;
-	double samples[SAMPLE_SIZE];
+	std::complex<int16_t> frame[SAMPLE_SIZE];
+	double Height[NUMBER_OF_BARS];
+	double PrevHeight[NUMBER_OF_BARS];
+	std::complex<int16_t> spectrum[FFT_SIZE];
+	kissfft<int16_t> fft(FFT_SIZE, false);
 
+	sf::SoundBuffer audioBuffer;
+	if(!audioBuffer.loadFromFile(filename))
+	{
+		std::cout << "Error opening audio file!" << std::endl;
+		return EXIT_FAILURE;
+	}
+	sf::Sound audio(audioBuffer);
 	for (size_t i = 0; i < NUMBER_OF_BARS; ++i)
 		PrevHeight[i] = 0.f;
 	
+	// Initialize and setup OpenGL.
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, TITLE.data(), NULL, NULL);
-
-	//Check for any errors creating the window.
 	if (window == NULL)
 	{
 		cerr << "Error creating window!!" << endl;
@@ -100,8 +97,6 @@ int main(int argc, char ** argv)
 		return -1;
 	}
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-	//Set the window resize callback function.
 	glfwSetFramebufferSizeCallback(window, framebuffersize_callback);
 
 	ShaderProgram shader;
@@ -112,8 +107,13 @@ int main(int argc, char ** argv)
 	shader.compile();
 	shader.use();
 
+	/*
+		A single bar object is used throught the program. For each bar, the positions and the height are
+		changed and then drawn again without clearing the buffer. This method was adopted to maintain a good
+		resource usage.
+	*/
 	Bar bar;
-	//Set the window's width and height as the bar's maximum mapping value.
+	// Set the window's width and height as the bar's maximum mapping value.
 	bar.set_roof(WINDOW_WIDTH, WINDOW_HEIGHT);
 	bar.set(0, 0, Bar_Width, 1);
 
@@ -121,27 +121,23 @@ int main(int argc, char ** argv)
 /**********************************************/
 	unsigned vao, vbo, ebo;
 
-	//Generate and bind Vertex array object.
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	//Generate, bind and configure vertex buffer object.
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, bar.vertices_size(), bar.get_vertices(), GL_DYNAMIC_DRAW);
 
-	//Generate, bind and configure element buffer object.
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, bar.indices_size(), bar.get_indices(), GL_DYNAMIC_DRAW);
 
-	//Vertex attribute pointer
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(0));
 	glEnableVertexAttribArray(0);
 
 /**********************************************/
 
-	//Get the uniform value locations
+	//Uniform values.
 	int indexLocation = glGetUniformLocation(shader.get_program(), "bar_index");
 	int widthLocation = glGetUniformLocation(shader.get_program(), "width");
 	int heightLocation = glGetUniformLocation(shader.get_program(), "height");
@@ -152,12 +148,14 @@ int main(int argc, char ** argv)
 	glUniform1i(totalBarsLocation, NUMBER_OF_BARS);
 
 	audio.play();
+	int offset = 0;
+	const int bufferSize = audioBuffer.getSampleCount();
 
 	//Main loop
 	while (Is_playing == true && glfwWindowShouldClose(window) == false)
 	{
 		//If the song has reached its end, close
-		if (audio.getPlayingOffset() >= audio.getDuration())
+		if (audio.getPlayingOffset() >= audioBuffer.getDuration())
 		{
 			Is_playing = false;
 			glfwSetWindowShouldClose(window, true);
@@ -166,11 +164,12 @@ int main(int argc, char ** argv)
 		process_inputs(window, &audio);
 
 		//Update the samples and calculate the fft to get the spectrum
-		copy_samples(file, (((float)audio.getPlayingOffset().asMilliseconds()/1000) * audio.getSampleRate()), samples, SAMPLE_SIZE);
-		spectrum = fft.fft(samples);
-		fft.ifft(spectrum, samples);
+		offset = double(audio.getPlayingOffset().asMilliseconds())/1000 * audioBuffer.getSampleRate();
+		copySamples(offset, audioBuffer.getSamples(), bufferSize, frame, SAMPLE_SIZE);
+		fft.transform(frame, spectrum);
 		//Calculate the height
-		calculate_height(Height, NUMBER_OF_BARS, spectrum, file.getSampleFrequency(), PrevHeight, FFT_SIZE);
+		calculateHeight(Height, PrevHeight, NUMBER_OF_BARS, spectrum, audioBuffer.getSampleRate(), FFT_SIZE);
+		std::cout << Height[2] << std::endl;
 		copy(begin(Height), end(Height), begin(PrevHeight));
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -180,7 +179,7 @@ int main(int argc, char ** argv)
 		for (size_t i = 0; i < NUMBER_OF_BARS; ++i)
 		{
 			//Set the colours
-			bar.set(i * (Bar_Width + Bar_Gap), 0, Bar_Width, (float)Height[i] * Height_multiplier);
+			bar.set(i * (Bar_Width + Bar_Gap), 0, Bar_Width, Height[i] * Height_multiplier);
 
 			//The buffers and uniform values must be updated on every iteration.
 			glUniform1i(indexLocation, i);

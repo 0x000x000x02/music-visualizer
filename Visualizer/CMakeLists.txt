@@ -13,7 +13,7 @@ list(APPEND Visualizer_Code_Files
 )
 
 add_executable(Visualizer ${Visualizer_Code_Files})
-target_link_libraries(Visualizer PRIVATE GLFW SFML Aquila GLAD)
+target_link_libraries(Visualizer PRIVATE GLFW SFML kissfft GLAD)
 target_include_directories(Visualizer PRIVATE "${CMAKE_CURRENT_LIST_DIR}/Include")
 
 # Set install target.
