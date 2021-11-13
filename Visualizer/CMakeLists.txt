@@ -17,10 +17,10 @@ target_link_libraries(Visualizer PRIVATE GLFW SFML kissfft GLAD)
 target_include_directories(Visualizer PRIVATE "${CMAKE_CURRENT_LIST_DIR}/Include")
 
 # Set install target.
-install(TARGETS Visualizer DESTINATION "Binaries")
+install(TARGETS Visualizer DESTINATION "Visualizer")
 
 # Install configuration for the default shader files.
 install (FILES
     "Shaders/fragment.txt"
     "Shaders/vertex.txt"
-    DESTINATION "Binaries/Shaders")
+    DESTINATION "Visualizer/Shaders")

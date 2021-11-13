@@ -21,7 +21,7 @@ if (MSVC)
             "Windows/Binaries/openal32.dll"
             "Windows/Binaries/sfml-audio-d-2.dll"
             "Windows/Binaries/sfml-system-d-2.dll"
-            DESTINATION "Binaries"
+            DESTINATION "Visualizer"
         )
     else ()
         list (APPEND SFML_LIBS
@@ -35,7 +35,7 @@ if (MSVC)
             "Windows/Binaries/openal32.dll"
             "Windows/Binaries/sfml-audio-2.dll"
             "Windows/Binaries/sfml-system-2.dll"
-            DESTINATION "Binaries"
+            DESTINATION "Visualizer"
         )
     endif ()
 
