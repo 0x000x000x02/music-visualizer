@@ -19,13 +19,17 @@ static void calculateHeight(double height[], double prevHeight[], const int barC
 	double fMax = 0;
 
 	// Get the max frequency
-	for (int i = 1; i < barCount; i++)
-		fMax = std::max(height[i-1], height[i]);
+	for (int i = 0; i < barCount; i++)
+		fMax = std::max(fMax, height[i]);
 
 	for (int i = 0; i < barCount; i++)
 	{
-		height[i] = std::pow(height[i] / 12, 0.5) * 1.0/fMax;
-		height[i] = double(spectrum[i + 1 + gap].real()) / sampleFrequency;
+		height[i] = 0;
+		for(int j = 0; j < gap; j++)
+		{
+			height[i] += double(spectrum[i + 1 + j].real()) / sampleFrequency;
+		}
+		height[i] /= gap;
 		if (i > 0)
 		{
 			height[i] = (height[i - 1] * smooth) + (height[i] * (1 - smooth));
