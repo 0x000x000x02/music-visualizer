@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -25,7 +27,7 @@ constexpr float Height_multiplier = 500;
 bool Is_playing = true;
 
 const string TITLE = "Visualizer";
-const string DEBUG_INFO = "Graphics Libraries: GLFW and GLAD\nAudio processing: Aquila\nAudio: SFML\n";
+const string DEBUG_INFO = "Graphics Libraries: GLFW and GLAD\nAudio processing: kissfft\nAudio: SFML\n";
 
 void framebuffersize_callback(GLFWwindow* window, int width, int height)
 {
@@ -47,6 +49,8 @@ void process_inputs(GLFWwindow * _window, sf::Sound * _sound)
 
 int main(int argc, char ** argv)
 {
+	std::cout << "Music Visualizer version " << PROJECT_VERSION_MAJOR << '.'
+			  << PROJECT_VERSION_MINOR << std::endl;
 #ifdef _DEBUG
 	cout << DEBUG_INFO << endl;
 #endif
