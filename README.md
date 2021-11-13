@@ -4,15 +4,15 @@ A simple music visualizer made in C++
 ## Compiling
 
 ### Windows x64
-1) Install CMake and Visual Studio 2019.
+1) Install CMake and Visual Studio 2019 / 2022.
 2) Clone the repository.
 3) Open Command Prompt and cd into the repo folder.
 4) Create a build directory using `mkdir build`
 5) Cd into the build folder using `cd build`.
 6) Execute the following command to configure
-     ```cmake -DCMAKE_BUILD_TYPE=Release .. # Release config```
-7) Execute the following command to build ```cmake --build . --config Release```
-8) Execute the following command to install ```cmake --install . --config Release --prefix <install-directory>```
+     `cmake -DCMAKE_BUILD_TYPE=Release ..`
+7) Execute the following command to build `cmake --build . --config Release`
+9) Execute the following command to install `cmake --install . --config Release --prefix <install-directory>`
 
 __NOTE__: Replace the `Release` with `Debug` for the debug config.
 
