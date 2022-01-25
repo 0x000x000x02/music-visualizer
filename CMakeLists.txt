@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 3.9)
 
 project("MusicVisualizer" VERSION 3.0)
 
+# Include CPack to generate installers (for fun).
+include(CPack)
+
 # Add the third libraries which will be used.
 add_subdirectory("Libraries")
 
