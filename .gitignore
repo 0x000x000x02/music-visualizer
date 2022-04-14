@@ -6,9 +6,16 @@ build/*
 out/*
 .vscode/*
 
+#Extra ide files
+*.json
+
 #Extra files
 *.zip
 *.wav
+*.flac
+
+#User files
+*.user
 
 # Prerequisites
 *.d
