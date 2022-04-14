@@ -5,6 +5,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <iomanip>
+#include <algorithm>
 
 #include <settings.h>
 #include <objects.h>
@@ -48,6 +49,11 @@ int main(int argc, char ** argv)
 	{
 		cout << "Enter a valid music file: " << endl;
 		getline(cin, filename);
+
+		// Remove any quotation marks in the input.
+		for (size_t i = 0; i < filename.length(); ++i)
+			if (filename[i] == '"')
+				filename.erase(i, 1);
 	}
 	else
 		filename = argv[1];
