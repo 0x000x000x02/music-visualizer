@@ -1,4 +1,4 @@
-# music-viualizer
+# Music Visualizer
 A simple music visualizer made in C++
 
 ## Compiling
