@@ -4,30 +4,17 @@
 #include <vector>
 #include <fstream>
 #include <cstdlib>
+#include <iomanip>
 
+#include <settings.h>
 #include <objects.h>
 #include <shaders.h>
 #include <utils.h>
 
 using namespace std;
 
-//Widths and heights in pixels
-//You can change the value of these variables and compile it yourself to get different results :)
-constexpr unsigned WINDOW_WIDTH = 800;
-constexpr unsigned WINDOW_HEIGHT = 600;
-constexpr unsigned FFT_SIZE = 512;
-constexpr unsigned NUMBER_OF_BARS = 240;
-constexpr unsigned SAMPLE_SIZE = 4096;
-constexpr int Bar_Width = 3;
-constexpr int Bar_Gap = 1;
-
-constexpr float Height_multiplier = 500;
-
 //The program loops if this is true, else clean everything up and exit
 bool Is_playing = true;
-
-const string TITLE = "Visualizer";
-const string DEBUG_INFO = "Graphics Libraries: GLFW and GLAD\nAudio processing: kissfft\nAudio: SFML\n";
 
 void framebuffersize_callback(GLFWwindow* window, int width, int height)
 {
@@ -54,6 +41,7 @@ int main(int argc, char ** argv)
 #ifdef _DEBUG
 	cout << DEBUG_INFO << endl;
 #endif
+	assert(((FFT_SIZE / 2) > NUMBER_OF_BARS));
 
 	string filename;
 	if (argc < 2)
@@ -66,7 +54,6 @@ int main(int argc, char ** argv)
 
 	SpctType frame[SAMPLE_SIZE];
 	double Height[NUMBER_OF_BARS];
-	double PrevHeight[NUMBER_OF_BARS];
 	SpctType spectrum[FFT_SIZE];
 	kissfft<int16_t> fft(FFT_SIZE, false);
 
@@ -78,15 +65,16 @@ int main(int argc, char ** argv)
 	}
 	sf::Sound audio(audioBuffer);
 	for (size_t i = 0; i < NUMBER_OF_BARS; ++i)
-		PrevHeight[i] = 0.f;
+		Height[i] = 0.f;
 	
 	// Initialize and setup OpenGL.
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwSwapInterval(60);
 
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, TITLE.data(), NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, TITLE, NULL, NULL);
 	if (window == NULL)
 	{
 		cerr << "Error creating window!!" << endl;
@@ -119,7 +107,7 @@ int main(int argc, char ** argv)
 	Bar bar;
 	// Set the window's width and height as the bar's maximum mapping value.
 	bar.set_roof(WINDOW_WIDTH, WINDOW_HEIGHT);
-	bar.set(0, 0, Bar_Width, 1);
+	bar.set(0, 0, BAR_WIDTH, 1);
 
 /***************BUFFERS AND STUFF**************/
 /**********************************************/
@@ -154,6 +142,7 @@ int main(int argc, char ** argv)
 	audio.play();
 	int offset = 0;
 	const int bufferSize = audioBuffer.getSampleCount();
+	const float binSizePerBar = ((float)audioBuffer.getSampleRate()/FFT_SIZE * (NUMBER_OF_BARS - 1))/NUMBER_OF_BARS;
 
 	//Main loop
 	while (Is_playing == true && glfwWindowShouldClose(window) == false)
@@ -169,11 +158,14 @@ int main(int argc, char ** argv)
 
 		//Update the samples and calculate the fft to get the spectrum
 		offset = double(audio.getPlayingOffset().asMilliseconds())/1000 * audioBuffer.getSampleRate();
-		copySamples(offset, audioBuffer.getSamples(), bufferSize, frame, SAMPLE_SIZE);
+
+		std::ios::sync_with_stdio(false);
+		std::cout << std::setprecision(3);
+
+		copySamples(offset, audioBuffer.getSamples(), bufferSize, frame);
 		fft.transform(frame, spectrum);
 		//Calculate the height
-		calculateHeight(Height, PrevHeight, NUMBER_OF_BARS, spectrum, audioBuffer.getSampleRate(), FFT_SIZE);
-		copy(begin(Height), end(Height), begin(PrevHeight));
+		calculateHeight(Height, spectrum, audioBuffer.getSampleRate(), binSizePerBar);
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -182,7 +174,7 @@ int main(int argc, char ** argv)
 		for (size_t i = 0; i < NUMBER_OF_BARS; ++i)
 		{
 			//Set the colours
-			bar.set(i * (Bar_Width + Bar_Gap), 0, Bar_Width, Height[i] * Height_multiplier);
+			bar.set(i * (BAR_WIDTH + BAR_GAP), 0, BAR_WIDTH, Height[i] * HEIGHT_MULTIPLIER);
 
 			//The buffers and uniform values must be updated on every iteration.
 			glUniform1i(indexLocation, i);

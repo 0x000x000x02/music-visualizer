@@ -10,6 +10,7 @@ list(APPEND Visualizer_Code_Files
     "Include/objects.h"
     "Include/shaders.h"
     "Include/utils.h"
+    "Include/settings.h"
 )
 
 add_executable(Visualizer ${Visualizer_Code_Files})

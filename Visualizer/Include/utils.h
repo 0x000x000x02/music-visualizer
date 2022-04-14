@@ -6,47 +6,50 @@
 #include <kissfft.hh>
 #include <SFML/Audio.hpp>
 
+#include <settings.h>
 #include <objects.h>
 
 #define PI 3.1415926535
 
 #define SpctType std::complex<int16_t>
 
-static void calculateHeight(double height[], double prevHeight[], const int barCount, const SpctType * spectrum, int sampleFrequency, size_t fftSize)
+static void copySamples(int offset, const sf::Int16* buffer, size_t bufferSize, SpctType* frame)
 {
-	static const double smooth = 0.5;
-	static const size_t gap = fftSize/barCount/2;
-	double fMax = 0;
-
-	// Get the max frequency
-	for (int i = 0; i < barCount; i++)
-		fMax = std::max(fMax, height[i]);
-
-	for (int i = 0; i < barCount; i++)
+	for (size_t i = 0; i < SAMPLE_SIZE; ++i)
 	{
-		height[i] = 0;
-		for(int j = 0; j < gap; j++)
-		{
-			height[i] += double(spectrum[i + 1 + j].real()) / sampleFrequency;
-		}
-		height[i] /= gap;
-		if (i > 0)
-		{
-			height[i] = (height[i - 1] * smooth) + (height[i] * (1 - smooth));
-		}
-
-		height[i] = (height[i] < 0) ? height[i] * -1 : height[i];
-
-		height[i] = prevHeight[i] + (double)(height[i] - prevHeight[i]) / 8;
+		double multiplier = 0.5 * cos(PI * i * 2.0 / (SAMPLE_SIZE - 1));
+		frame[i] = std::complex<int16_t>((offset + i < bufferSize) ? (multiplier * buffer[offset + i]) : 0.0f, 0);
 	}
 }
 
-static void copySamples(int offset, const sf::Int16 * buffer, size_t bufferSize , SpctType * frame, unsigned frameSize)
+static void calculateHeight(double height[], const SpctType * spectrum, int sampleFrequency, float binSizePerBar)
 {
-	for(size_t i = 0; i < frameSize; i++)
+	static const double smooth = 0.7;
+	static constexpr float deltaMultiplier = 1.0f/8.0f;
+
+	for (int i = 0; i < NUMBER_OF_BARS; ++i)
 	{
-		double multiplier = 0.5 * cos(2*PI*i / (frameSize-1));
-		frame[i].real((offset+i < bufferSize) ? (multiplier * buffer[offset+i]) : 0);
-		frame[i].imag(0);
+		double val = 0;
+
+		for (int j = i; i < NUMBER_OF_BARS; ++j)
+		{
+			const float freqBin = j * (float)sampleFrequency / FFT_SIZE;
+
+			if (freqBin > (j + 1) * binSizePerBar)
+				break;
+
+			if (freqBin > j * binSizePerBar && freqBin < (j + 1) * binSizePerBar)
+			{
+				val += (double)spectrum[j+1].real() / sampleFrequency;
+			}
+		}
+
+		if (i > 0)
+		{
+			val = (height[i - 1] * smooth) + (val * 1 - smooth);
+		}
+
+		double deltaVal = (val - height[i]) * deltaMultiplier;
+		height[i] += std::max(deltaVal, -height[i] * deltaMultiplier);
 	}
 }
