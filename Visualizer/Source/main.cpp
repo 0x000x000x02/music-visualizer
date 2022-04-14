@@ -59,7 +59,7 @@ int main(int argc, char ** argv)
 		filename = argv[1];
 
 	SpctType frame[SAMPLE_SIZE];
-	double Height[NUMBER_OF_BARS];
+	double Height[NUMBER_OF_BARS]{};
 	SpctType spectrum[FFT_SIZE];
 	kissfft<int16_t> fft(FFT_SIZE, false);
 
@@ -147,7 +147,7 @@ int main(int argc, char ** argv)
 
 	audio.play();
 	int offset = 0;
-	const int bufferSize = audioBuffer.getSampleCount();
+	const uint64_t bufferSize = audioBuffer.getSampleCount();
 	const float binSizePerBar = ((float)audioBuffer.getSampleRate()/FFT_SIZE * (NUMBER_OF_BARS - 1))/NUMBER_OF_BARS;
 
 	//Main loop
@@ -163,7 +163,7 @@ int main(int argc, char ** argv)
 		process_inputs(window, &audio);
 
 		//Update the samples and calculate the fft to get the spectrum
-		offset = double(audio.getPlayingOffset().asMilliseconds())/1000 * audioBuffer.getSampleRate();
+		offset = (int)((double)audio.getPlayingOffset().asMilliseconds()/1000 * audioBuffer.getSampleRate());
 
 		std::ios::sync_with_stdio(false);
 		std::cout << std::setprecision(3);
@@ -177,14 +177,14 @@ int main(int argc, char ** argv)
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//Loops through each bar and changes its properties.
-		for (size_t i = 0; i < NUMBER_OF_BARS; ++i)
+		for (int i = 0; i < NUMBER_OF_BARS; ++i)
 		{
 			//Set the colours
-			bar.set(i * (BAR_WIDTH + BAR_GAP), 0, BAR_WIDTH, Height[i] * HEIGHT_MULTIPLIER);
+			bar.set(i * (BAR_WIDTH + BAR_GAP), 0, BAR_WIDTH, (int)(Height[i] * HEIGHT_MULTIPLIER));
 
 			//The buffers and uniform values must be updated on every iteration.
-			glUniform1i(indexLocation, i);
-			glUniform1f(timeLocation, glfwGetTime() * 1000);
+			glUniform1i(indexLocation, (GLint)i);
+			glUniform1f(timeLocation, (float)glfwGetTime() * 1000.0f);
 			glBufferData(GL_ARRAY_BUFFER, bar.vertices_size(), bar.get_vertices(), GL_DYNAMIC_DRAW);
 			bar.draw(window);
 		}

@@ -136,7 +136,7 @@ void Bar::init()
 float Bar::remap(int val, int roof)
 {
 	//std::cout << ((float)val / roof) << std::endl;
-	return ((float)val / (roof/2));
+	return ((float)val)/(roof/static_cast<float>(2));
 }
 
 void Bar::set_roof(int x, int y)

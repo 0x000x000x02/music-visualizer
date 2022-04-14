@@ -18,7 +18,7 @@ static void copySamples(int offset, const sf::Int16* buffer, size_t bufferSize, 
 	for (size_t i = 0; i < SAMPLE_SIZE; ++i)
 	{
 		double multiplier = 0.5 * cos(PI * i * 2.0 / (SAMPLE_SIZE - 1));
-		frame[i] = std::complex<int16_t>((offset + i < bufferSize) ? (multiplier * buffer[offset + i]) : 0.0f, 0);
+		frame[i] = std::complex<int16_t>((offset + i < bufferSize) ? ((int16_t)(multiplier * buffer[offset + i])) : 0, 0);
 	}
 }
 
