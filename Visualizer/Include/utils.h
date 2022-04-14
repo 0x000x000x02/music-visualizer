@@ -50,6 +50,6 @@ static void calculateHeight(double height[], const SpctType * spectrum, int samp
 		}
 
 		double deltaVal = (val - height[i]) * deltaMultiplier;
-		height[i] += std::max(deltaVal, -height[i] * deltaMultiplier);
+		height[i] += std::max(deltaVal, -height[i] * deltaMultiplier * 2.0f);
 	}
 }
