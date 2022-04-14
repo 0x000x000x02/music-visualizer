@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.9)
 
-project("MusicVisualizer" VERSION 3.0)
+project("MusicVisualizer" VERSION 3.1)
 
 # Include CPack to generate installers (for fun).
 include(CPack)
